@@ -1,0 +1,116 @@
+﻿@model CRUD_ONE.Models.Cliente
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+    <head>
+        <script type="text/javascript" src="~/js/Validacao.js"></script>
+    </head>
+<h2>Create</h2>
+
+<h4>Cliente</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="formCliente">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Nome" class="control-label"></label>
+                <input asp-for="Nome" class="form-control" />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cpf" class="control-label"></label>
+                <input asp-for="Cpf" class="form-control" onblur="formataCPF(this)" />
+                <span asp-validation-for="Cpf" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="dataNascimento" class="control-label"></label>
+                <input asp-for="dataNascimento" type="date" class="form-control" />
+                <span asp-validation-for="dataNascimento" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" onclick="Create()" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+ 
+<script type="text/javascript">
+    function formataCPF(cpf) {
+        const elementoAlvo = cpf
+        const cpfAtual = cpf.value
+
+        let cpfAtualizado;
+        //var regex = /^(\d)\1+$/;
+        cpfAtualizado = cpfAtual.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,
+            function (regex, argumento1, argumento2, argumento3, argumento4) {
+                return argumento1 + '.' + argumento2 + '.' + argumento3 + '-' + argumento4;
+            })
+        elementoAlvo.value = cpfAtualizado;
+        ValidarCPF(cpfAtualizado);
+    }  
+
+    function ValidarCPF(strCPF) {
+        var valido = true;
+
+        if (strCPF != '') {
+            strCPF = strCPF.replace(/[^\d]+/g, '');
+            var Soma;
+            var Resto;
+            var rgx = /^(\d)\1+$/;
+            Soma = 0;
+
+            if (rgx.test(strCPF)) {
+                alert('oi');
+                valido = false;
+            }
+
+            if (valido) {
+                for (i = 1; i <= 9; i++)
+                    Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
+                Resto = Soma % 11;
+                if (Resto < 2)
+                    Resto = 0;
+                else
+                    Resto = 11 - Resto;
+
+                if (Resto != parseInt(strCPF.substring(9, 10)))
+                    valido = false;
+            }
+
+            if (valido) {
+                Soma = 0;
+                for (i = 1; i <= 10; i++)
+                    Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
+                Resto = Soma % 11;
+                if (Resto < 2)
+                    Resto = 0;
+                else
+                    Resto = 11 - Resto;
+
+                if (Resto != parseInt(strCPF.substring(10, 11)))
+                    valido = false;
+            }
+
+            if (valido) {
+                return true;
+            }
+            else {
+                alert("CPF inválido.");
+                $("#Cpf").val('');
+                return false;
+            }
+        }
+
+
+    }
+
+
+    
+</script>
