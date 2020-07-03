@@ -2,6 +2,7 @@
 using CRUD_ONE.Models;
 using CRUD_ONE.Models.Interface;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using X.PagedList;
 namespace CRUD_ONE.Controllers
 {
@@ -16,8 +17,8 @@ namespace CRUD_ONE.Controllers
         {
             int tamanhoPagina = 6;
             int numeroPagina = pagina ?? 1;
-            var listaClientes = _cliente.GetAllClientes().ToPagedList(numeroPagina, tamanhoPagina);
-
+            //var listaClientes = _cliente.GetAllClientes().ToPagedList(numeroPagina, tamanhoPagina);
+            var listaClientes = _cliente.GetAllClientes().Cast<Cliente>().ToPagedList(numeroPagina, tamanhoPagina);
             return View(listaClientes);
         }
 
@@ -73,7 +74,7 @@ namespace CRUD_ONE.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, [Bind] Cliente cliente)
         {
-            if (id != cliente.idCliente)
+            if (id != cliente.IdCliente)
             {
                 return NotFound();
             }

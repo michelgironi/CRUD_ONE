@@ -32,7 +32,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.idCliente)
+                    @Html.DisplayFor(modelItem => item.IdCliente)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Nome)
@@ -41,12 +41,12 @@
                     @Html.DisplayFor(modelItem => item.Cpf)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.dataNascimento)
+                    @Html.DisplayFor(modelItem => item.DataNascimento)
                 </td>
                 <td>
-                    @Html.ActionLink("Editar", "Edit", new { id = item.idCliente }) |
-                    @Html.ActionLink("Detalhes", "Details", new { id = item.idCliente }) |
-                    @Html.ActionLink("Deletar", "Delete", new { id = item.idCliente })
+                    @Html.ActionLink("Editar", "Edit", new { id = item.IdCliente }) |
+                    @Html.ActionLink("Detalhes", "Details", new { id = item.IdCliente }) |
+                    @Html.ActionLink("Deletar", "Delete", new { id = item.IdCliente })
                 </td>
             </tr>
         }

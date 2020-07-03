@@ -11,10 +11,21 @@ namespace CRUD_ONE.Models.Factory
         public static ICliente Criar(int idcliente = 0, string nome = "", string cpf = "", DateTime? datanascimento = null)
         {
             return new Cliente() {
-                idCliente = idcliente,
+                IdCliente = idcliente,
                 Nome = nome,
                 Cpf = cpf,
-                dataNascimento = datanascimento.HasValue ? datanascimento.Value : DateTime.MinValue
+                DataNascimento = datanascimento ?? DateTime.MinValue
+            };
+        }
+
+        public static ICliente Criar(Cliente cliente)
+        {
+            return new Cliente()
+            {
+                IdCliente = cliente.IdCliente,
+                Nome = cliente.Nome,
+                Cpf = cliente.Cpf,
+                DataNascimento = cliente.DataNascimento
             };
         }
     }

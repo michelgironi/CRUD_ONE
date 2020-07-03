@@ -13,7 +13,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form id="formCliente">
+        <form id="formCliente" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Nome" class="control-label"></label>
@@ -26,12 +26,12 @@
                 <span asp-validation-for="Cpf" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="dataNascimento" class="control-label"></label>
-                <input asp-for="dataNascimento" type="date" class="form-control" />
-                <span asp-validation-for="dataNascimento" class="text-danger"></span>
+                <label asp-for="DataNascimento" class="control-label"></label>
+                <input asp-for="DataNascimento" type="date" class="form-control" />
+                <span asp-validation-for="DataNascimento" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" onclick="Create()" class="btn btn-default" />
+                <input type="submit" id="Submit" class="btn btn-default" />
             </div>
         </form>
     </div>
@@ -42,6 +42,18 @@
 </div>
  
 <script type="text/javascript">
+    document.forms[0].onsubmit = () => {
+        let formData = new FormData(document.forms[0]);
+        fetch('', {
+            method: 'post',
+            body: new URLSearchParams(formData)
+        })
+            .then(() => {
+                window.location.href = '@Url.Action("Index", "Cliente")';
+            });
+        return false;
+    };
+
     function formataCPF(cpf) {
         const elementoAlvo = cpf
         const cpfAtual = cpf.value
@@ -54,7 +66,7 @@
             })
         elementoAlvo.value = cpfAtualizado;
         ValidarCPF(cpfAtualizado);
-    }  
+    }
 
     function ValidarCPF(strCPF) {
         var valido = true;
@@ -112,5 +124,5 @@
     }
 
 
-    
+
 </script>

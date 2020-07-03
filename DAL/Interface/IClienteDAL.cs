@@ -9,7 +9,7 @@ namespace CRUD_ONE.DAL.Interface
 {
     public interface IClienteDAL 
     {
-        IEnumerable<Cliente> GetAllClientes();
+        IEnumerable<ICliente> GetAllClientes();
         void AddCliente(ICliente cliente);
         void UpdateCliente(ICliente cliente);
         ICliente GetCliente(int? id);

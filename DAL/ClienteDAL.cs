@@ -2,103 +2,85 @@
 using CRUD_ONE.Models;
 using CRUD_ONE.Models.Factory;
 using CRUD_ONE.Models.Interface;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System.Threading.Tasks;
+using CRUD_ONE.Context;
 
 namespace CRUD_ONE.DAL
 {
-        public class ClienteDal : IClienteDAL
+    public class ClienteDal :  IClienteDAL  
         {
-        string connectionString = @"Data Source=DESKTOP-KADK7IS;Initial Catalog=Cadastro;Integrated Security=True;";
+        //string connectionString = @"Data Source=DESKTOP-KADK7IS;Initial Catalog=Cadastro;Integrated Security=True;";
 
-        public IEnumerable<Cliente> GetAllClientes()
+        private ConnectionStrings ConnectionStrings { get; set; }
+        
+
+        public ClienteDal(IOptions<ConnectionStrings> connectionStrings) 
         {
-            var lstCliente = new List<Cliente>();
+            ConnectionStrings = connectionStrings.Value;
+        }
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+
+        public IEnumerable<ICliente> GetAllClientes()
+        {
+            var lstCliente = new List<ICliente>();
+
+            using (var db = new ClienteContext(ConnectionStrings))
             {
-                SqlCommand cmd = new SqlCommand("SELECT idCliente, Nome, Cpf, dataNascimento FROM dbo.Clientes", con);
-                cmd.CommandType = CommandType.Text;
-
-                con.Open();
-                SqlDataReader rdr = cmd.ExecuteReader();
-
-                while (rdr.Read())
-                {
-                    Cliente cliente = (Cliente)ClienteFactory.Criar(Convert.ToInt32(rdr["idCliente"]), rdr["Nome"].ToString(), rdr["Cpf"].ToString(), Convert.ToDateTime(rdr["dataNascimento"]));
-                 
-                    lstCliente.Add(cliente);
-                }
-                con.Close();
+                lstCliente = db.Clientes.ToList().ConvertAll(new Converter<Cliente, ICliente>(ClienteFactory.Criar));
             }
-            return lstCliente;
+
+            return lstCliente.ToList();
         }
 
         public void AddCliente(ICliente cliente)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (var db = new ClienteContext(ConnectionStrings))
             {
-                string comandoSQL = "INSERT INTO dbo.Clientes (Nome,Cpf,dataNascimento) VALUES (@Nome, @Cpf, @dataNascimento)";
-                SqlCommand cmd = new SqlCommand(comandoSQL, con);
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@Nome", cliente.Nome);
-                cmd.Parameters.AddWithValue("@Cpf", cliente.Cpf);
-                cmd.Parameters.AddWithValue("@dataNascimento", cliente.dataNascimento);
-                con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
+                db.Clientes.Add((Cliente)cliente);
+                db.SaveChanges();
             }
         }
 
         public void UpdateCliente(ICliente cliente)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            
+            using (var db = new ClienteContext(ConnectionStrings))
             {
-                string comandoSQL = "UPDATE dbo.Clientes SET Nome = @Nome, Cpf = @Cpf, dataNascimento = @dataNascimento WHERE idCliente = @idCliente";
-                SqlCommand cmd = new SqlCommand(comandoSQL, con);
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@idCliente", cliente.idCliente);
-                cmd.Parameters.AddWithValue("@Nome", cliente.Nome);
-                cmd.Parameters.AddWithValue("@Cpf", cliente.Cpf);
-                cmd.Parameters.AddWithValue("@dataNascimento", cliente.dataNascimento);
-                con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
+                var clientedb = db.Clientes.Where(b => b.IdCliente == cliente.IdCliente).FirstOrDefault();
+                if (clientedb != null)
+                {
+                    clientedb.Nome = cliente.Nome;
+                    clientedb.Cpf = cliente.Cpf;
+                    clientedb.DataNascimento = cliente.DataNascimento;
+                    db.SaveChanges();
+                }
             }
         }
 
         public ICliente GetCliente(int? id)
         {
             ICliente cliente = null;
-            using (SqlConnection con = new SqlConnection(connectionString))
+
+            using (var db = new ClienteContext(ConnectionStrings))
             {
-                string sqlQuery = "SELECT * FROM dbo.Clientes WHERE idCliente = " + id;
-                SqlCommand cmd = new SqlCommand(sqlQuery, con);
-                con.Open();
-                SqlDataReader rdr = cmd.ExecuteReader();
-                while (rdr.Read())
-                {
-                    cliente = ClienteFactory.Criar(Convert.ToInt32(rdr["idCliente"]), rdr["Nome"].ToString(), rdr["Cpf"].ToString(), Convert.ToDateTime(rdr["dataNascimento"]));
-                }
+                cliente = db.Clientes.Where(b => b.IdCliente == id).FirstOrDefault();
             }
             return cliente;
         }
 
         public void DeleteCliente(int? id)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            var cliente = GetCliente(id);
+            using (var db = new ClienteContext(ConnectionStrings))
             {
-                string comandoSQL = "DELETE FROM dbo.Clientes WHERE idCliente = @idCliente";
-                SqlCommand cmd = new SqlCommand(comandoSQL, con);
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@idCliente", id);
-                con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
+                db.Clientes.Remove((Cliente)cliente);
+                db.SaveChanges();
             }
         }
     }

@@ -7,9 +7,9 @@ namespace CRUD_ONE.Models.Interface
 {
     public interface ICliente
     {
-        int idCliente { get; set; }
+        int IdCliente { get; set; }
         string Nome { get; set; }
         string Cpf { get; set; }
-        DateTime dataNascimento { get; set; }
+        DateTime DataNascimento { get; set; }
     }
 }

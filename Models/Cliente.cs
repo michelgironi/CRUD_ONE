@@ -10,7 +10,7 @@ namespace CRUD_ONE.Models
     {
     [Key]
     [Display(Name = "ID")]
-    public int idCliente { get; set; }
+    public int IdCliente { get; set; }
     [Required]
     [Display(Name = "Nome")]
     public string Nome { get; set; }
@@ -21,6 +21,6 @@ namespace CRUD_ONE.Models
     [Required]
     [Display(Name = "Data de Nascimento")]
     [DisplayFormat (DataFormatString = "{0:dd/MM/yyyy}")]
-    public DateTime dataNascimento { get; set; }
+    public DateTime DataNascimento { get; set; }
     }
 }
